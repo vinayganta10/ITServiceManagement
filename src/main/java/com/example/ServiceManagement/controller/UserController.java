@@ -1,38 +1,26 @@
 package com.example.ServiceManagement.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.ServiceManagement.model.User;
+import com.example.ServiceManagement.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-class Ticket{
-    int id;
-    String name;
-    public Ticket(int id,String name){
-        this.id=id;
-        this.name=name;
-    }
-}
-
 @RestController
+@CrossOrigin
+@RequestMapping("/api")
 public class UserController {
-    List<Ticket> tickets = new ArrayList<>();
-    @GetMapping
-    public List<Ticket> getTickets(){
-        return tickets;
+    @Autowired
+    UserService userService;
+
+    @GetMapping("/getUser/{id}")
+    public User getUser(@PathVariable long id){
+        return userService.getUser(id);
     }
 
-    @PostMapping
-    public void addTicket(Ticket ticket){
-        tickets.add(new Ticket(ticket.id,ticket.name));
-        System.out.println("Ticket successfully added");
+    @PostMapping("/addUser")
+    public void addUser(User user){
+        userService.addUser(user);
     }
-
-    @PatchMapping
-    public void updateTicket(Ticket ticket){
-
-    }
-
 }
