@@ -15,8 +15,8 @@ public class Ticket {
     private String subject;
     private String description;
     private String domain;
-    private User raisedBy;
-    private User assignedTo;
+    //private User raisedBy;
+    //private User assignedTo;
     private String Status;
     private Date dateOfCreation;
     private Date dateOfLatestUpdate;
