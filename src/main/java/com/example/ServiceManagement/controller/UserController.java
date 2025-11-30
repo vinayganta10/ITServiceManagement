@@ -3,6 +3,8 @@ package com.example.ServiceManagement.controller;
 import com.example.ServiceManagement.model.User;
 import com.example.ServiceManagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -15,12 +17,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/getUser/{id}")
-    public User getUser(@PathVariable long id){
-        return userService.getUser(id);
-    }
-
-    @PostMapping("/addUser")
-    public void addUser(User user){
-        userService.addUser(user);
+    public ResponseEntity<User> getUser(@PathVariable long id){
+        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
     }
 }
