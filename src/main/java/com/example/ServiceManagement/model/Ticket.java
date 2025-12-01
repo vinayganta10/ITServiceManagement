@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -24,7 +25,7 @@ public class Ticket {
     @ManyToOne
     private User assignedTo;
     private String Status;
-    private Date dateOfCreation;
-    private Date dateOfLatestUpdate;
-    private Date closedDate;
+    private LocalDateTime dateOfCreation;
+    private LocalDateTime dateOfLatestUpdate;
+    private LocalDateTime closedDate;
 }
