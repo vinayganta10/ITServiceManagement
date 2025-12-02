@@ -23,7 +23,7 @@ public class Ticket {
     @ManyToOne
     private User raisedBy;
     @ManyToOne
-    private User assignedTo;
+    private Agent assignedTo;
     private String Status;
     private LocalDateTime dateOfCreation;
     private LocalDateTime dateOfLatestUpdate;

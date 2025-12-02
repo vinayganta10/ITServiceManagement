@@ -33,4 +33,9 @@ public class TicketController {
         service.addTicket(ticketData);
         return new ResponseEntity<>("Ticket added",HttpStatus.ACCEPTED);
     }
+
+    @GetMapping("/getTicketsByUser")
+    public ResponseEntity<List<Ticket>> getTicketsByUser(){
+        return new ResponseEntity<>(service.getTicketsByUser(),HttpStatus.OK);
+    }
 }

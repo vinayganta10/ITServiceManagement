@@ -10,12 +10,23 @@ import java.util.List;
 @Repository
 public interface TicketRepo extends JpaRepository<Ticket,Long> {
 
-//    @Query("SELECT * FROM Ticket WHERE STATUS=':STATUS_FILTER'")
-//    public List<Ticket> getTicketsByStatusFilter(String STATUS_FILTER);
-//
-//    @Query("SELECT * FROM Ticket T,USER U WHERE T.raisedBy=U.:id")
-//    public List<Ticket> getTicketsByUserId(long id);
-//
-//    @Query("SELECT * FROM Ticket WHERE domain=:DOMAIN_FILTER")
-//    public List<Ticket> getTicketsByDomainFilter(String DOMAIN_FILTER);
+    //user
+    @Query("SELECT * FROM Ticket WHERE JSON_EXTRACT(raisedBy,$.email)=:email")
+    public List<Ticket> findTicketsByUser(String email);
+
+    //user
+    @Query("SELECT * FROM Ticket WHERE JSON_EXTRACT(raisedBy,$.email)=:email AND STATUS=':STATUS_FILTER'")
+    public List<Ticket> getTicketsByUserStatusFilter(String email,String STATUS_FILTER);
+
+    //agent
+    @Query("SELECT * FROM Ticket WHERE JSON_EXTRACT(assignedTo,$.email)=:email")
+    List<Ticket> findTicketsByAgent(String email);
+
+    //agent
+    @Query("SELECT * FROM Ticket WHERE JSON_EXTRACT(raisedBy,$.email)=:email AND STATUS=':STATUS_FILTER'")
+    public List<Ticket> getTicketsByAgentStatusFilter(String email, String STATUS_FILTER);
+
+    //agent
+    @Query("UPDATE Ticket SET status=:status where id=:id")
+    void updateStatusOfTicket(long id,String status);
 }
