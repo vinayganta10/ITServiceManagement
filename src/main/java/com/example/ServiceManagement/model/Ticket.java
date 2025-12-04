@@ -24,7 +24,7 @@ public class Ticket {
     private User raisedBy;
     @ManyToOne
     private Agent assignedTo;
-    private String Status;
+    private String status;
     private LocalDateTime dateOfCreation;
     private LocalDateTime dateOfLatestUpdate;
     private LocalDateTime closedDate;

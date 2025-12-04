@@ -3,30 +3,37 @@ package com.example.ServiceManagement.repository;
 import com.example.ServiceManagement.model.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.Modifying;
+
 
 import java.util.List;
 
 @Repository
-public interface TicketRepo extends JpaRepository<Ticket,Long> {
+public interface TicketRepo extends JpaRepository<Ticket, Long> {
 
-    //user
-    @Query("SELECT * FROM Ticket WHERE JSON_EXTRACT(raisedBy,$.email)=:email")
-    public List<Ticket> findTicketsByUser(String email);
+    // User
+    @Query("SELECT t FROM Ticket t WHERE t.raisedBy.email = :email")
+    List<Ticket> findTicketsByUser(@Param("email") String email);
 
-    //user
-    @Query("SELECT * FROM Ticket WHERE JSON_EXTRACT(raisedBy,$.email)=:email AND STATUS=':STATUS_FILTER'")
-    public List<Ticket> getTicketsByUserStatusFilter(String email,String STATUS_FILTER);
+    // User with Status Filter
+    @Query("SELECT t FROM Ticket t WHERE t.raisedBy.email = :email AND t.status = :status")
+    List<Ticket> getTicketsByUserStatusFilter(@Param("email") String email, @Param("status") String status);
 
-    //agent
-    @Query("SELECT * FROM Ticket WHERE JSON_EXTRACT(assignedTo,$.email)=:email")
-    List<Ticket> findTicketsByAgent(String email);
+    // Agent
+    @Query("SELECT t FROM Ticket t WHERE t.assignedTo.email = :email")
+    List<Ticket> findTicketsByAgent(@Param("email") String email);
 
-    //agent
-    @Query("SELECT * FROM Ticket WHERE JSON_EXTRACT(raisedBy,$.email)=:email AND STATUS=':STATUS_FILTER'")
-    public List<Ticket> getTicketsByAgentStatusFilter(String email, String STATUS_FILTER);
+    // Agent with Status Filter
+    @Query("SELECT t FROM Ticket t WHERE t.assignedTo.email = :email AND t.status = :status")
+    List<Ticket> getTicketsByAgentStatusFilter(@Param("email") String email, @Param("status") String status);
 
-    //agent
-    @Query("UPDATE Ticket SET status=:status where id=:id")
-    void updateStatusOfTicket(long id,String status);
+    // Update Ticket Status
+    @Transactional
+    @Modifying
+    @Query("UPDATE Ticket t SET t.status = :status WHERE t.id = :id")
+    void updateStatusOfTicket(@Param("id") long id, @Param("status") String status);
 }
+

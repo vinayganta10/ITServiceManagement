@@ -2,17 +2,27 @@ package com.example.ServiceManagement.repository;
 
 import com.example.ServiceManagement.model.Agent;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface AgentRepo extends JpaRepository<Agent, Long> {
 
-    @Query("SELECT * FROM AGENT WHERE domain=:domain ORDER BY numberOfTickets,Id LIMIT 1;")
-    Agent getAgentByDomainWithMinTickets(String domain);
+    Agent findTopByDomainOrderByNumberOfTicketsAscIdAsc(String domain);
 
-    @Query("UPDATE AGENT SET numberOfTickets = " +
-            "(SELECT COUNT(*) FROM TICKET WHERE JSON_EXTRACT(assignedTo, '$.id') = :id AND (status = 'OPEN' OR status='AWAITING_REPLY'))" +
-            "WHERE id = :id;")
-    Agent getAgentByIdAndUpdateNoOfTickets(long id);
+
+    @Transactional
+    @Modifying
+    @Query("""
+       UPDATE Agent a SET a.numberOfTickets = (
+           SELECT COUNT(t) FROM Ticket t
+           WHERE t.assignedTo.id = :id
+             AND (t.status = 'OPEN' OR t.status = 'AWAITING_REPLY')
+       )
+       WHERE a.id = :id
+       """)
+    Agent getAgentByIdAndUpdateNoOfTickets(@Param("id") long id);
 }

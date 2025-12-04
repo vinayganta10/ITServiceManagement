@@ -11,7 +11,7 @@ public class AgentService {
     AgentRepo agentRepo;
 
     public Agent getAgentByDomainWithMinTickets(String domain){
-        return agentRepo.getAgentByDomainWithMinTickets(domain);
+        return agentRepo.findTopByDomainOrderByNumberOfTicketsAscIdAsc(domain);
     }
 
     public Agent getAgentByIdAndUpdateNoOfTickets(long id){
