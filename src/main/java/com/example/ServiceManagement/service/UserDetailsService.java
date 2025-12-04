@@ -13,6 +13,7 @@ public class UserDetailsService implements org.springframework.security.core.use
 
     @Autowired
     UserRepo userRepo;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepo.findByEmail(email);

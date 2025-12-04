@@ -12,7 +12,7 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public void addUser(User user){
         user.setPassword(encoder.encode(user.getPassword()));  
