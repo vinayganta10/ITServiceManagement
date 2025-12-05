@@ -24,5 +24,8 @@ public interface AgentRepo extends JpaRepository<Agent, Long> {
        )
        WHERE a.id = :id
        """)
-    Agent getAgentByIdAndUpdateNoOfTickets(@Param("id") long id);
+    void getAgentByIdAndUpdateNoOfTickets(@Param("id") long id);
+
+    Agent findByEmail(String email);
+
 }

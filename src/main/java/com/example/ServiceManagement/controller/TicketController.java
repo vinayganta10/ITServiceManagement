@@ -16,26 +16,35 @@ import java.util.*;
 public class TicketController {
 
     @Autowired
-    TicketService service;
+    TicketService ticketService;
 
     @GetMapping("/getTicket/{id}")
     public ResponseEntity<Ticket> getTicketByUserId(@PathVariable long id){
-        return new ResponseEntity<>(service.getTicketById(id), HttpStatus.OK);
+        return new ResponseEntity<>(ticketService.getTicketById(id), HttpStatus.OK);
     }
 
     @GetMapping("/getAllTickets")
     public ResponseEntity<List<Ticket>> getAllTickets(){
-        return new ResponseEntity<>(service.getAllTickets(),HttpStatus.OK);
+        return new ResponseEntity<>(ticketService.getAllTickets(),HttpStatus.OK);
     }
 
     @PostMapping("/addTicket")
     public ResponseEntity<?> addTicket(@RequestBody TicketData ticketData){
-        service.addTicket(ticketData);
+        ticketService.addTicket(ticketData);
         return new ResponseEntity<>("Ticket added",HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/getTicketsByUser")
     public ResponseEntity<List<Ticket>> getTicketsByUser(){
-        return new ResponseEntity<>(service.getTicketsByUser(),HttpStatus.OK);
+        return new ResponseEntity<>(ticketService.getTicketsByUser(),HttpStatus.OK);
+    }
+
+    @PostMapping("/updateStatusOfTicket")
+    public ResponseEntity<?> updateStatusOfTicket(@RequestBody Map<String,Object> data){
+        long id = ((Number) data.get("id")).longValue();
+        long agentId = ((Number) data.get("agentId")).longValue();
+        String status = (String) data.get("status");
+        ticketService.updateStatusOfTicket(id,agentId,status);
+        return new ResponseEntity<>("Ticket is moved to "+status+" status",HttpStatus.OK);
     }
 }

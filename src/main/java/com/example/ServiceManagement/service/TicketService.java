@@ -39,7 +39,6 @@ public class TicketService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByEmail(email);
         Agent agent = agentService.getAgentByDomainWithMinTickets(ticketData.getDomain());
-        agentService.getAgentByIdAndUpdateNoOfTickets(agent.getId());
         Ticket ticket = new Ticket();
         ticket.setSubject(ticketData.getSubject());
         ticket.setDescription(ticketData.getDescription());
@@ -51,6 +50,7 @@ public class TicketService {
         ticket.setDateOfLatestUpdate(LocalDateTime.now());
         ticket.setClosedDate(null);
         ticketRepo.save(ticket);
+        agentService.getAgentByIdAndUpdateNoOfTickets(agent.getId());
     }
 
     //agent

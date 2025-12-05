@@ -10,11 +10,15 @@ public class AgentService {
     @Autowired
     AgentRepo agentRepo;
 
+    public Agent getAgentByEmail(String email){
+        return agentRepo.findByEmail(email);
+    }
+
     public Agent getAgentByDomainWithMinTickets(String domain){
         return agentRepo.findTopByDomainOrderByNumberOfTicketsAscIdAsc(domain);
     }
 
-    public Agent getAgentByIdAndUpdateNoOfTickets(long id){
-        return agentRepo.getAgentByIdAndUpdateNoOfTickets(id);
+    public void getAgentByIdAndUpdateNoOfTickets(long id){
+        agentRepo.getAgentByIdAndUpdateNoOfTickets(id);
     }
 }

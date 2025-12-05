@@ -2,7 +2,9 @@ package com.example.ServiceManagement.controller;
 
 
 import com.example.ServiceManagement.dto.LoginRequest;
+import com.example.ServiceManagement.model.Agent;
 import com.example.ServiceManagement.model.User;
+import com.example.ServiceManagement.service.AgentService;
 import com.example.ServiceManagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,11 +13,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api")
-public class Authentication {
+@RequestMapping("/auth")
+public class AuthenticationController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    AgentService agentService;
+
     @GetMapping("/test")
     public String test(){
         return "Hello world!!!";
@@ -23,12 +29,8 @@ public class Authentication {
 
     @PostMapping("/login")
     public ResponseEntity<?> userLogin(@RequestBody LoginRequest loginRequest){
-        User user = userService.getUserByEmail(loginRequest.getEmail());
-        if(user.getId()==null) return new ResponseEntity<>("Email is incorrect",HttpStatus.NOT_FOUND);
-        if(user.getPassword().equals(loginRequest.getPassword())){
-            return new ResponseEntity<>("Login successful",HttpStatus.OK);
-        }
-        else return new ResponseEntity<>("Password is incorrect",HttpStatus.BAD_REQUEST);
+        String token = userService.verify(loginRequest);
+        return new ResponseEntity<>(token,HttpStatus.OK);
     }
 
     @PostMapping("/signup")
