@@ -14,7 +14,7 @@ import java.util.*;
 @RequestMapping("/api")
 public class UserController {
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @GetMapping("/getUser/{id}")
     public ResponseEntity<User> getUser(@PathVariable long id){

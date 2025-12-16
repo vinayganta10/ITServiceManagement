@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    AgentService agentService;
+    private AgentService agentService;
 
     @GetMapping("/test")
     public String test(){

@@ -16,7 +16,7 @@ import java.util.*;
 public class TicketController {
 
     @Autowired
-    TicketService ticketService;
+    private TicketService ticketService;
 
     @GetMapping("/getTicket/{id}")
     public ResponseEntity<Ticket> getTicketByUserId(@PathVariable long id){

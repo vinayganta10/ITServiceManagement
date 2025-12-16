@@ -18,9 +18,10 @@ import java.time.LocalDateTime;
 public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long Id;
-    String message;
-    User CreatedBy;
-    Agent AssignedTo;
-    private LocalDateTime dateOfCreation;
+    private Long Id;
+    private Long ticketId;
+    private String message;
+    private User CreatedBy;
+    private Agent AssignedTo;
+    private LocalDateTime createdAt;
 }
