@@ -28,7 +28,7 @@ public class SecuirtyConfig {
         http.
                 csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request->request
-                        .requestMatchers("/auth/login", "/auth/signup", "/test").permitAll()
+                        .requestMatchers("/auth/**","/api/getUserByEmail/**").permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

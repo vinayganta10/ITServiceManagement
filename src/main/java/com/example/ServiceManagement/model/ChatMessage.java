@@ -1,9 +1,6 @@
 package com.example.ServiceManagement.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +18,9 @@ public class ChatMessage {
     private Long Id;
     private Long ticketId;
     private String message;
-    private User CreatedBy;
+    @ManyToOne
+    private User RaisedBy;
+    @ManyToOne
     private Agent AssignedTo;
     private LocalDateTime createdAt;
 }

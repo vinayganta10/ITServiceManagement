@@ -2,6 +2,7 @@ package com.example.ServiceManagement.controller;
 
 
 import com.example.ServiceManagement.dto.LoginRequest;
+import com.example.ServiceManagement.dto.LoginResponse;
 import com.example.ServiceManagement.model.Agent;
 import com.example.ServiceManagement.model.User;
 import com.example.ServiceManagement.service.AgentService;
@@ -28,9 +29,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> userLogin(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<LoginResponse> userLogin(@RequestBody LoginRequest loginRequest){
         String token = userService.verify(loginRequest);
-        return new ResponseEntity<>(token,HttpStatus.OK);
+        User user = userService.getUserByEmail(loginRequest.getEmail());
+        LoginResponse response = new LoginResponse();
+        response.setEmail(loginRequest.getEmail());
+        response.setRole(user.getType());
+        response.setToken(token);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @PostMapping("/signup")

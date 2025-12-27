@@ -19,7 +19,7 @@ public class ChatService {
 
     public ChatMessage saveMessage(ChatMessage message){
         Ticket ticket = ticketService.getTicketById(message.getTicketId());
-        message.setCreatedBy(ticket.getRaisedBy());
+        message.setRaisedBy(ticket.getRaisedBy());
         message.setAssignedTo(ticket.getAssignedTo());
         message.setCreatedAt(LocalDateTime.now());
         return chatRepo.save(message);

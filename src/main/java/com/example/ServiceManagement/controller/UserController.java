@@ -16,8 +16,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/getUser/{id}")
-    public ResponseEntity<User> getUser(@PathVariable long id){
-        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
+    @GetMapping("/getUserByEmail/{email}")
+    public ResponseEntity<User> getUser(@PathVariable String email){
+        return new ResponseEntity<>(userService.getUserByEmail(email), HttpStatus.OK);
     }
 }

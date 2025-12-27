@@ -49,3 +49,9 @@ gradle-app.setting
 # === Test Reports ===
 test-output/
 surefire-reports/
+
+# frontend
+frontend/node_modules
+frontend/dist
+frontend/.vite
+
