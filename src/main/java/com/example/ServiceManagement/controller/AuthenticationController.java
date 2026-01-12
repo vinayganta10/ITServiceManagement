@@ -33,7 +33,7 @@ public class AuthenticationController {
         String token = userService.verify(loginRequest);
         User user = userService.getUserByEmail(loginRequest.getEmail());
         LoginResponse response = new LoginResponse();
-        response.setEmail(loginRequest.getEmail());
+        response.setName(user.getName());
         response.setRole(user.getType());
         response.setToken(token);
         return new ResponseEntity<>(response,HttpStatus.OK);

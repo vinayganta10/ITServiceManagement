@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   TextField,
   Button,
-  Container,
+  Snackbar,
+  Alert,
   Box,
   Typography,
   Paper,
@@ -15,16 +16,41 @@ export default function Login() {
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const location = useLocation();
+
+  const redirectTo = location.state?.redirectTo || "/";
+
+  const [toastOpen, setToastOpen] = useState(false);
+  const [errorToast, setErrorToast] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    if (username.length === 0 || password.length === 0) {
+      setError("Please enter username and password to login");
+      setErrorToast(true);
+      return;
+    }
     try {
-      const res = await axios.post(
-        "http://localhost:8080/auth/login",
-        { email, password }
-      );
-      login(res.data);
-      navigate("/");
+      const res = await fetch("http://localhost:8080/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      console.log(res.status);
+
+      if (res.status === 401) {
+        setError("Username or password is incorrect");
+        setErrorToast(true);
+      } else if (res.status === 200) {
+        login(res.data);
+        setUsername(email.split(".")[0]);
+        setToastOpen(true);
+        setTimeout(() => navigate(redirectTo, { replace: true }), 1200);
+      }
     } catch (err) {
       console.error("Login failed", err);
     }
@@ -76,6 +102,38 @@ export default function Login() {
         >
           Login
         </Button>
+        <Typography
+          variant="body2"
+          textAlign="center"
+          sx={{ mt: 2, cursor: "pointer", color: "primary.main" }}
+          onClick={() => navigate("/signup")}
+        >
+          Create an account?
+        </Typography>
+        <Snackbar
+          open={toastOpen}
+          autoHideDuration={3000}
+          onClose={() => setToastOpen(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert severity="success" variant="filled">
+            Hi {username}!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={errorToast}
+          autoHideDuration={2000}
+          onClose={() => setToastOpen(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            severity="error"
+            variant="filled"
+            onClose={() => setErrorToast(false)}
+          >
+            Username or password is incorrect
+          </Alert>
+        </Snackbar>
       </Paper>
 
       {/* Animation */}

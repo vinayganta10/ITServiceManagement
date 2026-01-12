@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -19,4 +21,7 @@ public class User {
     private String email;
     private String password;
     private String type;
+    private LocalDateTime joinedAt;
+    private String location;
+    private String organization;
 }

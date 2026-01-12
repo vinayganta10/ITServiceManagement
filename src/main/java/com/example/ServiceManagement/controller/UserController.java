@@ -16,8 +16,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/getUserByEmail/{email}")
-    public ResponseEntity<User> getUser(@PathVariable String email){
-        return new ResponseEntity<>(userService.getUserByEmail(email), HttpStatus.OK);
+    @GetMapping("/getUserByEmail")
+    public ResponseEntity<User> getUser(){
+        return new ResponseEntity<>(userService.getUser(), HttpStatus.OK);
     }
 }

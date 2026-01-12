@@ -6,7 +6,11 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -19,6 +23,9 @@ import java.util.Map;
 @Service
 public class JwtService {
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     String secretKey="";
     public JwtService(){
         try {
@@ -28,6 +35,20 @@ public class JwtService {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Authentication getAuthentication(String token) {
+
+        String username = extractUsername(token);
+
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(username);
+
+        return new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
     }
 
     public String generateToken(String email){

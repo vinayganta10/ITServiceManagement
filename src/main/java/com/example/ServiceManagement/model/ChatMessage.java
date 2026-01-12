@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.bytebuddy.build.HashCodeAndEqualsPlugin;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +17,8 @@ public class ChatMessage {
     private Long Id;
     private Long ticketId;
     private String message;
+    private Long senderId;
+    private String senderName;
     @ManyToOne
     private User RaisedBy;
     @ManyToOne

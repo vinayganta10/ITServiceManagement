@@ -22,7 +22,7 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/tickets" element={<Tickets />} />
-            <Route path="/tickets/:id" element={<TicketDetails />} />
+            <Route path="/ticket/:id" element={<TicketDetails />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
         </Routes>

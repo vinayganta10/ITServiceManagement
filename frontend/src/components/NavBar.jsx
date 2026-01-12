@@ -4,21 +4,29 @@ import {
   Typography,
   IconButton,
   Box,
+  Button,
 } from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-export default function Navbar() {
+export default function NavBar() {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isLoggedIn = !!localStorage.getItem("token");
+
+  // ✅ Detect auth pages
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/signup";
 
   const handleLogout = () => {
     logout();
+    localStorage.removeItem("token");
     navigate("/login");
   };
 
@@ -40,37 +48,65 @@ export default function Navbar() {
           sx={{
             textDecoration: "none",
             color: "#1976d2",
-            fontWeight: 600,
+            fontWeight: 700,
+            letterSpacing: 1,
           }}
         >
           ITSM
         </Typography>
 
-        {/* Icons */}
-        <Box>
-          <IconButton component={Link} to="/" sx={{ color: "#1976d2" }}>
-            <HomeIcon />
-          </IconButton>
+        {/* Right Section */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          {/* ❌ Hide buttons on login/signup pages */}
+          {!isAuthPage && !isLoggedIn && (
+            <>
+              <Button
+                component={Link}
+                to="/login"
+                variant="outlined"
+                sx={{ fontWeight: 600 }}
+              >
+                Login
+              </Button>
 
-          <IconButton
-            component={Link}
-            to="/tickets"
-            sx={{ color: "#1976d2" }}
-          >
-            <ConfirmationNumberIcon />
-          </IconButton>
+              <Button
+                component={Link}
+                to="/signup"
+                variant="contained"
+                sx={{ fontWeight: 600 }}
+              >
+                Sign Up
+              </Button>
+            </>
+          )}
 
-          <IconButton
-            component={Link}
-            to="/profile"
-            sx={{ color: "#1976d2" }}
-          >
-            <PersonIcon />
-          </IconButton>
+          {/* ✅ Logged in user */}
+          {isLoggedIn && (
+            <>
+              <IconButton
+                component={Link}
+                to="/tickets"
+                sx={{ color: "#1976d2" }}
+              >
+                <ConfirmationNumberIcon fontSize="large" />
+              </IconButton>
 
-          <IconButton onClick={handleLogout} sx={{ color: "#d32f2f" }}>
-            <LogoutIcon />
-          </IconButton>
+              <IconButton
+                component={Link}
+                to="/profile"
+                sx={{ color: "#1976d2" }}
+              >
+                <PersonIcon fontSize="large" />
+              </IconButton>
+
+              <IconButton
+                onClick={handleLogout}
+                sx={{ color: "#d32f2f" }}
+              >
+                <LogoutIcon fontSize="large" />
+              </IconButton>
+            </>
+          )}
         </Box>
       </Toolbar>
     </AppBar>

@@ -26,6 +26,7 @@ public class TicketService {
 
     //all
     public Ticket getTicketById(long id){
+        System.out.println(id);
         return ticketRepo.findById(id).orElse(new Ticket());
     }
 
@@ -37,7 +38,7 @@ public class TicketService {
     //user
     public void addTicket(TicketData ticketData){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userService.getUserByEmail(email);
+        User user = userService.getUser();
         Agent agent = agentService.getAgentByDomainWithMinTickets(ticketData.getDomain());
         Ticket ticket = new Ticket();
         ticket.setSubject(ticketData.getSubject());
