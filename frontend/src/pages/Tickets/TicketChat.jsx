@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  Box,
-  Stack,
-  TextField,
-  IconButton,
-  Paper,
-} from "@mui/material";
+import { Box, Stack, TextField, IconButton, Paper } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import ChatMessage from "../../components/chatMessage";
 import {
@@ -15,11 +9,10 @@ import {
   sendChatMessage,
 } from "../chatSocket";
 
-const TicketChat = ({ ticketId, token, userName }) => {
+const TicketChat = ({ ticketId, token, userId }) => {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
 
-  // Load chat history
   useEffect(() => {
     axios
       .get(`http://localhost:8080/api/ticket/${ticketId}`, {
@@ -28,9 +21,8 @@ const TicketChat = ({ ticketId, token, userName }) => {
       .then((res) => setMessages(res.data));
   }, [ticketId, token]);
 
-  // WebSocket connection
   useEffect(() => {
-    connectChatSocket(ticketId, (msg) => {
+    connectChatSocket(token, ticketId, (msg) => {
       setMessages((prev) => [...prev, msg]);
     });
 
@@ -44,27 +36,57 @@ const TicketChat = ({ ticketId, token, userName }) => {
   };
 
   return (
-    <Paper sx={{ p: 2, height: "100%" }}>
-      <Stack spacing={2} height="100%">
-        <Stack spacing={1} flex={1} overflow="auto">
+    <Paper
+      elevation={0} 
+      sx={{
+        p: 2,
+        height: "500px", 
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        bgcolor: "grey.50", 
+        border: "1px solid",
+        borderColor: "divider",
+        boxSizing: "border-box",
+      }}
+    >
+      <Stack spacing={2} sx={{ height: "100%", width: "100%" }}>
+        {/* Message Area */}
+        <Stack
+          spacing={1}
+          flex={1}
+          sx={{
+            overflowY: "auto",
+            pr: 1, // Padding for scrollbar
+            width: "100%",
+          }}
+        >
           {messages.map((msg, i) => (
-            <ChatMessage
-              key={i}
-              msg={msg}
-              isOwn={msg.raisedBy?.id === userName?.id}
-            />
+            <ChatMessage key={i} msg={msg} isOwn={msg.senderId === userId} />
           ))}
         </Stack>
 
-        <Box display="flex">
+        {/* Input Area */}
+        <Box
+          display="flex"
+          alignItems="center"
+          sx={{
+            pt: 2,
+            borderTop: "1px solid",
+            borderColor: "divider",
+            width: "100%",
+          }}
+        >
           <TextField
             fullWidth
+            size="small"
             placeholder="Type a message..."
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            sx={{ bgcolor: "white" }}
           />
-          <IconButton onClick={handleSend}>
+          <IconButton color="primary" onClick={handleSend} sx={{ ml: 1 }}>
             <SendIcon />
           </IconButton>
         </Box>

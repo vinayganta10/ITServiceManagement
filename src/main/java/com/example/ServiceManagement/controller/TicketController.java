@@ -1,6 +1,7 @@
 package com.example.ServiceManagement.controller;
 
 import com.example.ServiceManagement.dto.TicketData;
+import com.example.ServiceManagement.dto.TicketStatusUpdate;
 import com.example.ServiceManagement.model.Ticket;
 import com.example.ServiceManagement.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.*;
 
 @RestController
@@ -30,8 +32,8 @@ public class TicketController {
 
     @PostMapping("/addTicket")
     public ResponseEntity<?> addTicket(@RequestBody TicketData ticketData){
-        ticketService.addTicket(ticketData);
-        return new ResponseEntity<>("Ticket added",HttpStatus.ACCEPTED);
+        long id = ticketService.addTicket(ticketData);
+        return new ResponseEntity<>(id,HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/getTicketsByUser")
@@ -40,10 +42,10 @@ public class TicketController {
     }
 
     @PostMapping("/updateStatusOfTicket")
-    public ResponseEntity<?> updateStatusOfTicket(@RequestBody Map<String,Object> data){
-        long id = ((Number) data.get("id")).longValue();
-        long agentId = ((Number) data.get("agentId")).longValue();
-        String status = (String) data.get("status");
+    public ResponseEntity<?> updateStatusOfTicket(@RequestBody TicketStatusUpdate ticketStatusUpdate ) throws AccessDeniedException {
+        long id = ticketStatusUpdate.getId();
+        long agentId = ticketStatusUpdate.getAgentId();
+        String status = ticketStatusUpdate.getStatus();
         ticketService.updateStatusOfTicket(id,agentId,status);
         return new ResponseEntity<>("Ticket is moved to "+status+" status",HttpStatus.OK);
     }

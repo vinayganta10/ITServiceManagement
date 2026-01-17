@@ -16,7 +16,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/getUserByEmail")
+    @GetMapping("/getUser")
     public ResponseEntity<User> getUser(){
         return new ResponseEntity<>(userService.getUser(), HttpStatus.OK);
     }

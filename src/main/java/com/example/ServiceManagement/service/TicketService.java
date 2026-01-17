@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TicketService {
@@ -36,7 +36,7 @@ public class TicketService {
     }
 
     //user
-    public void addTicket(TicketData ticketData){
+    public long addTicket(TicketData ticketData){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUser();
         Agent agent = agentService.getAgentByDomainWithMinTickets(ticketData.getDomain());
@@ -52,6 +52,7 @@ public class TicketService {
         ticket.setClosedDate(null);
         ticketRepo.save(ticket);
         agentService.getAgentByIdAndUpdateNoOfTickets(agent.getId());
+        return ticket.getId();
     }
 
     //agent
@@ -67,7 +68,11 @@ public class TicketService {
     }
 
     //agent
-    public void updateStatusOfTicket(long id,long agentId,String status){
+    public void updateStatusOfTicket(long id,long agentId,String status) throws AccessDeniedException{
+        Ticket ticket = ticketRepo.findById(id).orElse(new Ticket());
+        if(agentId!=ticket.getAssignedTo().getId()){
+            throw new AccessDeniedException("You are not authorized to update this ticket");
+        }
         ticketRepo.updateStatusOfTicket(id,status);
         if(status.equalsIgnoreCase("closed")){
             agentService.getAgentByIdAndUpdateNoOfTickets(agentId);

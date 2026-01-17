@@ -1,22 +1,33 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 
 const ChatMessage = ({ msg, isOwn }) => {
   return (
     <Box
-      sx={{
-        alignSelf: isOwn ? "flex-end" : "flex-start",
-        backgroundColor: isOwn ? "#1976d2" : "#e0e0e0",
-        color: isOwn ? "white" : "black",
-        px: 2,
-        py: 1,
-        borderRadius: 2,
-        maxWidth: "70%",
-      }}
+      display="flex"
+      justifyContent={isOwn ? "flex-end" : "flex-start"}
     >
-      <Typography variant="body2">{msg.message}</Typography>
-      <Typography variant="caption">
-        {new Date(msg.createdAt).toLocaleTimeString()}
-      </Typography>
+      <Paper
+        sx={{
+          p: 1.5,
+          maxWidth: "70%",
+          backgroundColor: isOwn ? "#DCF8C6" : "#FFFFFF",
+        }}
+      >
+        {/* Sender Name */}
+        {!isOwn && (
+          <Typography
+            variant="caption"
+            sx={{ fontWeight: "bold", display: "block" }}
+          >
+            {msg.senderName}
+          </Typography>
+        )}
+
+        {/* Message */}
+        <Typography variant="body1">
+          {msg.message}
+        </Typography>
+      </Paper>
     </Box>
   );
 };

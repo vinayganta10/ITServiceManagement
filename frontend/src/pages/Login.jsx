@@ -27,19 +27,15 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    if (username.length === 0 || password.length === 0) {
+    if (email.length === 0 || password.length === 0) {
       setError("Please enter username and password to login");
       setErrorToast(true);
       return;
     }
     try {
-      const res = await fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await axios.post("http://localhost:8080/auth/login",{
+        email,password
+      })
       console.log(res.status);
 
       if (res.status === 401) {
