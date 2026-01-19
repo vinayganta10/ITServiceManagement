@@ -40,16 +40,14 @@ public class TicketService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUser();
         Agent agent = agentService.getAgentByDomainWithMinTickets(ticketData.getDomain());
-        Ticket ticket = new Ticket();
-        ticket.setSubject(ticketData.getSubject());
-        ticket.setDescription(ticketData.getDescription());
-        ticket.setDomain(ticketData.getDomain());
-        ticket.setStatus("OPEN");
-        ticket.setRaisedBy(user);
-        ticket.setAssignedTo(agent);
-        ticket.setDateOfCreation(LocalDateTime.now());
-        ticket.setDateOfLatestUpdate(LocalDateTime.now());
-        ticket.setClosedDate(null);
+        Ticket ticket = Ticket.builder().subject(ticketData.getSubject())
+                .description(ticketData.getDescription())
+                .domain(ticketData.getDomain())
+                .raisedBy(user)
+                .assignedTo(agent)
+                .dateOfLatestUpdate(LocalDateTime.now())
+                .closedDate(null)
+                .build();
         ticketRepo.save(ticket);
         agentService.getAgentByIdAndUpdateNoOfTickets(agent.getId());
         return ticket.getId();
@@ -89,5 +87,18 @@ public class TicketService {
     public List<Ticket> getTicketsByUserStatusFilter(String filter){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return ticketRepo.getTicketsByUserStatusFilter(email,filter);
+    }
+
+    //user
+    public long cloneTicket(long id){
+        Ticket existingTicket = ticketRepo.findById(id).orElse(new Ticket());
+        Ticket newTicket = existingTicket.copy();
+        newTicket.setRaisedBy(userService.getUser());
+        newTicket.setAssignedTo(agentService.getAgentByDomainWithMinTickets(existingTicket.getDomain()));
+        newTicket.setDateOfCreation(LocalDateTime.now());
+        newTicket.setDateOfLatestUpdate(LocalDateTime.now());
+        ticketRepo.save(newTicket);
+        agentService.getAgentByIdAndUpdateNoOfTickets(newTicket.getAssignedTo().getId());
+        return newTicket.getId();
     }
 }

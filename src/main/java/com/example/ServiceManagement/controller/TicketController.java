@@ -49,4 +49,11 @@ public class TicketController {
         ticketService.updateStatusOfTicket(id,agentId,status);
         return new ResponseEntity<>("Ticket is moved to "+status+" status",HttpStatus.OK);
     }
+
+    @PostMapping("/cloneTicket")
+    public ResponseEntity<?> cloneTicket(@RequestBody Map<String,Long> requestBody){
+        long id = requestBody.get("id");
+        long newTicketId = ticketService.cloneTicket(id);
+        return new ResponseEntity<>(newTicketId,HttpStatus.ACCEPTED);
+    }
 }

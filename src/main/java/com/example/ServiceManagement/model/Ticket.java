@@ -1,8 +1,10 @@
 package com.example.ServiceManagement.model;
 
+import com.example.ServiceManagement.prototypes.Copy;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +15,8 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Ticket {
+@Builder
+public class Ticket implements Copy<Ticket> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,8 +27,21 @@ public class Ticket {
     private User raisedBy;
     @ManyToOne
     private Agent assignedTo;
-    private String status;
-    private LocalDateTime dateOfCreation;
+    @Builder.Default
+    private String status = "OPEN";
+
+    @Builder.Default
+    private LocalDateTime dateOfCreation = LocalDateTime.now();
     private LocalDateTime dateOfLatestUpdate;
     private LocalDateTime closedDate;
+
+    @Override
+    public Ticket copy() {
+        Ticket ticket = Ticket.builder().
+                subject(this.subject).
+                description(this.description).
+                domain(this.domain).
+                assignedTo(this.assignedTo).build();
+        return ticket;
+    }
 }
