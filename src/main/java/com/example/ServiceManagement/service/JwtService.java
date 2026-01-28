@@ -51,21 +51,23 @@ public class JwtService {
         );
     }
 
-    public String generateToken(String email){
+    public String generateToken(String email,String role) {
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder()
-                .claims()
-                .add(claims)
+                .claim("role", role)
                 .subject(email)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() +1000 * 60 * 60 * 10))
-                .and()
                 .signWith(getKey())
                 .compact();
     }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {

@@ -5,12 +5,14 @@ import com.example.ServiceManagement.dto.TicketStatusUpdate;
 import com.example.ServiceManagement.model.Ticket;
 import com.example.ServiceManagement.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @CrossOrigin
@@ -26,8 +28,15 @@ public class TicketController {
     }
 
     @GetMapping("/getAllTickets")
-    public ResponseEntity<List<Ticket>> getAllTickets(){
-        return new ResponseEntity<>(ticketService.getAllTickets(),HttpStatus.OK);
+    public ResponseEntity<List<Ticket>> getAllTickets(@RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch){
+        String eTag = ticketService.generateETagForAllTickets();
+        if(eTag.equals(ifNoneMatch)){
+            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        }
+        return ResponseEntity.ok()
+                .eTag(eTag)
+                .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
+                .body(ticketService.getAllTickets());
     }
 
     @PostMapping("/addTicket")

@@ -26,6 +26,10 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+
   const handleLogin = async () => {
     if (email.length === 0 || password.length === 0) {
       setError("Please enter username and password to login");
@@ -33,9 +37,10 @@ export default function Login() {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:8080/auth/login",{
-        email,password
-      })
+      const res = await axios.post("http://localhost:8080/auth/login", {
+        email,
+        password,
+      });
       console.log(res.status);
 
       if (res.status === 401) {
@@ -98,6 +103,58 @@ export default function Login() {
         >
           Login
         </Button>
+        <Button
+          variant="outlined"
+          fullWidth
+          sx={{
+            mt: 2,
+            py: 1.2,
+            textTransform: "none",
+            borderColor: "#dadce0",
+            color: "#3c4043",
+            fontWeight: 500,
+            "&:hover": {
+              backgroundColor: "#f7f8f8",
+              borderColor: "#dadce0",
+            },
+          }}
+          onClick={handleGoogleLogin}
+        >
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="Google"
+            style={{ width: 18, marginRight: 10 }}
+          />
+          Continue with Google
+        </Button>
+        <Button
+          variant="outlined"
+          fullWidth
+          sx={{
+            mt: 2,
+            py: 1.2,
+            textTransform: "none",
+            borderColor: "#24292f",
+            color: "#24292f",
+            fontWeight: 500,
+            "&:hover": {
+              backgroundColor: "#f6f8fa",
+              borderColor: "#24292f",
+            },
+          }}
+          onClick={() => {
+            window.location.href =
+              "http://localhost:8080/oauth2/authorization/github";
+          }}
+        >
+          <img
+            src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+            alt="GitHub"
+            style={{ width: 18, marginRight: 10 }}
+          />
+          Continue with GitHub
+        </Button>
+
         <Typography
           variant="body2"
           textAlign="center"

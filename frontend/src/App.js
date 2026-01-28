@@ -9,7 +9,9 @@ import TicketDetails from "./pages/TicketDetails";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NavBar from "./components/NavBar";
-import CreateTicket from "./pages/CreateTicket";
+import CreateTicket from "./pages/CreateTicket"
+import OAuthSuccess from "./pages/OAuthSuccess";
+
 
 function App() {
   return (
@@ -21,6 +23,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/oauth-success" element={<OAuthSuccess />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/tickets" element={<Tickets />} />

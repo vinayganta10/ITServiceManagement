@@ -20,4 +20,9 @@ public class UserController {
     public ResponseEntity<User> getUser(){
         return new ResponseEntity<>(userService.getUser(), HttpStatus.OK);
     }
+
+    @GetMapping("/admin/getAllUsers")
+    public ResponseEntity<List<User>> getAllUsers(){
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    }
 }

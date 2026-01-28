@@ -10,7 +10,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -100,5 +102,16 @@ public class TicketService {
         ticketRepo.save(newTicket);
         agentService.getAgentByIdAndUpdateNoOfTickets(newTicket.getAssignedTo().getId());
         return newTicket.getId();
+    }
+
+    //ETag hash
+    public String generateETagForAllTickets(){
+        Object[] meta = (Object[]) ticketRepo.fetchTicketListMeta();
+       LocalDateTime ldt = (LocalDateTime) meta[0];
+       Instant instant = ldt.atZone(ZoneOffset.UTC).toInstant();
+       int count = ((Long) meta[1]).intValue();
+       String eTag = "\"tickets-" + instant.toEpochMilli() + "-" + count + "\"";
+        System.out.println(eTag);
+       return eTag;
     }
 }

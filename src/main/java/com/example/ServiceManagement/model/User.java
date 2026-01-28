@@ -1,5 +1,6 @@
 package com.example.ServiceManagement.model;
 
+import com.example.ServiceManagement.controller.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

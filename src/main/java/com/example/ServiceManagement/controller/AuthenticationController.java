@@ -3,10 +3,12 @@ package com.example.ServiceManagement.controller;
 
 import com.example.ServiceManagement.dto.LoginRequest;
 import com.example.ServiceManagement.dto.LoginResponse;
+import com.example.ServiceManagement.dto.SignupRequest;
 import com.example.ServiceManagement.model.Agent;
 import com.example.ServiceManagement.model.User;
 import com.example.ServiceManagement.service.AgentService;
 import com.example.ServiceManagement.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +42,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> userSignup(@RequestBody User user){
-        userService.addUser(user);
+    public ResponseEntity<?> userSignup(@Valid @RequestBody SignupRequest signupRequest){
+        userService.addUser(signupRequest);
         return new ResponseEntity<>("User signup successful",HttpStatus.OK);
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -35,5 +36,8 @@ public interface TicketRepo extends JpaRepository<Ticket, Long> {
     @Modifying
     @Query("UPDATE Ticket t SET t.status = :status WHERE t.id = :id")
     void updateStatusOfTicket(@Param("id") long id, @Param("status") String status);
+
+    @Query("SELECT MAX(t.dateOfLatestUpdate), COUNT(t) FROM Ticket t")
+    Object fetchTicketListMeta();
 }
 
