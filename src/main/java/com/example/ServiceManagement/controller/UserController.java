@@ -1,5 +1,6 @@
 package com.example.ServiceManagement.controller;
 
+import com.example.ServiceManagement.dto.CursorPage;
 import com.example.ServiceManagement.model.User;
 import com.example.ServiceManagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,8 @@ public class UserController {
     }
 
     @GetMapping("/admin/getAllUsers")
-    public ResponseEntity<List<User>> getAllUsers(){
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    public ResponseEntity<CursorPage<User>> getAllUsers(@RequestParam(required = false) Long cursor,
+                                                        @RequestParam(defaultValue = "5") int limit){
+        return new ResponseEntity<>(userService.getAllUsers(cursor,limit), HttpStatus.OK);
     }
 }

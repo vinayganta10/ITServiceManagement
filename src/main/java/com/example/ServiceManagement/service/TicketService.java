@@ -1,11 +1,14 @@
 package com.example.ServiceManagement.service;
 
+import com.example.ServiceManagement.dto.CursorPage;
 import com.example.ServiceManagement.dto.TicketData;
 import com.example.ServiceManagement.model.Agent;
 import com.example.ServiceManagement.model.Ticket;
 import com.example.ServiceManagement.model.User;
 import com.example.ServiceManagement.repository.TicketRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +36,14 @@ public class TicketService {
     }
 
     //admin
-    public List<Ticket> getAllTickets(){
-        return ticketRepo.findAll();
+    public CursorPage<Ticket> getAllTickets(Long cursor, int limit){
+        Pageable pageable = PageRequest.of(0, limit);
+
+        List<Ticket> tickets = ticketRepo.findNextPage(cursor, pageable);
+
+        boolean hasMore = tickets.size() == limit;
+        Long nextCursor = hasMore ? tickets.get(tickets.size() - 1).getId() : null;
+        return new CursorPage<>(tickets, nextCursor, hasMore);
     }
 
     //user

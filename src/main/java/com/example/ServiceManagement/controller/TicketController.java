@@ -1,5 +1,6 @@
 package com.example.ServiceManagement.controller;
 
+import com.example.ServiceManagement.dto.CursorPage;
 import com.example.ServiceManagement.dto.TicketData;
 import com.example.ServiceManagement.dto.TicketStatusUpdate;
 import com.example.ServiceManagement.model.Ticket;
@@ -28,7 +29,10 @@ public class TicketController {
     }
 
     @GetMapping("/getAllTickets")
-    public ResponseEntity<List<Ticket>> getAllTickets(@RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch){
+    public ResponseEntity<CursorPage<Ticket>> getAllTickets
+            (@RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch,
+             @RequestParam(defaultValue = "4") int limit,
+             @RequestParam(required = false) Long cursor){
         String eTag = ticketService.generateETagForAllTickets();
         if(eTag.equals(ifNoneMatch)){
             return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
@@ -36,7 +40,7 @@ public class TicketController {
         return ResponseEntity.ok()
                 .eTag(eTag)
                 .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
-                .body(ticketService.getAllTickets());
+                .body(ticketService.getAllTickets(cursor,limit));
     }
 
     @PostMapping("/addTicket")

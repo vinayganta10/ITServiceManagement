@@ -1,6 +1,7 @@
 package com.example.ServiceManagement.repository;
 
 import com.example.ServiceManagement.model.Ticket;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -39,5 +40,16 @@ public interface TicketRepo extends JpaRepository<Ticket, Long> {
 
     @Query("SELECT MAX(t.dateOfLatestUpdate), COUNT(t) FROM Ticket t")
     Object fetchTicketListMeta();
+
+    @Query("""
+        SELECT t
+        FROM Ticket t
+        WHERE (:cursor IS NULL OR t.id < :cursor)
+        ORDER BY t.id DESC
+    """)
+    List<Ticket> findNextPage(
+            @Param("cursor") Long cursor,
+            Pageable pageable
+    );
 }
 

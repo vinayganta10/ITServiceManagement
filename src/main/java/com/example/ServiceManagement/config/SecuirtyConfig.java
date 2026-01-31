@@ -42,7 +42,7 @@ public class SecuirtyConfig {
                 csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request->request
-                        .requestMatchers("/api/admin/**").hasRole("admin")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/auth/**","/ws/**").permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())

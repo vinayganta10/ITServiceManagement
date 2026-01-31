@@ -1,8 +1,11 @@
 package com.example.ServiceManagement.service;
 
 
+import com.example.ServiceManagement.dto.CursorPage;
 import com.example.ServiceManagement.dto.SignupRequest;
 import com.example.ServiceManagement.exceptions.BusinessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import com.example.ServiceManagement.dto.LoginRequest;
 import com.example.ServiceManagement.model.User;
@@ -78,7 +81,13 @@ public class UserService {
         return userRepo.findByEmail(email).orElseThrow(() -> new BusinessException("User not found"));
     }
 
-    public List<User> getAllUsers(){
-        return userRepo.findAll();
+    public CursorPage<User> getAllUsers(Long cursor,int limit){
+        Pageable pageable = PageRequest.of(0, limit);
+
+        List<User> users = userRepo.findNextPage(cursor,pageable);
+
+        boolean hasMore = users.size() == limit;
+        Long nextCursor = hasMore ? users.get(users.size() - 1).getId() : null;
+        return new CursorPage<>(users, nextCursor, hasMore);
     }
 }
