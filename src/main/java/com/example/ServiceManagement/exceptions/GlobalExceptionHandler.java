@@ -14,7 +14,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // DTO validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidationErrors(
             MethodArgumentNotValidException ex) {
@@ -30,7 +29,19 @@ public class GlobalExceptionHandler {
                 .body(new ApiError("Validation failed", errors));
     }
 
-    // Business exceptions
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<Map<String, String>> handleJwtException(
+            JwtAuthenticationException ex) {
+
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(error);
+    }
+
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiError> handleBusinessException(
             BusinessException ex) {
@@ -40,7 +51,6 @@ public class GlobalExceptionHandler {
                 .body(new ApiError(ex.getMessage(), null));
     }
 
-    // Authentication / Authorization
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<ApiError> handleSecurityException(
             SecurityException ex) {
@@ -49,8 +59,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.FORBIDDEN)
                 .body(new ApiError(ex.getMessage(), null));
     }
-
-    // Fallback
+    
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGenericException(Exception ex) {
 

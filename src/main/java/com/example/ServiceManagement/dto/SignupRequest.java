@@ -1,13 +1,12 @@
 package com.example.ServiceManagement.dto;
 
 import com.example.ServiceManagement.controller.UserType;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class SignupRequest {
 
     @NotBlank(message = "Name is mandatory")
@@ -19,7 +18,10 @@ public class SignupRequest {
     private String email;
 
     @NotBlank(message = "Password is mandatory")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$",
+            message = "Password must contain uppercase, lowercase, number and special character"
+    )
     private String password;
 
     @NotNull

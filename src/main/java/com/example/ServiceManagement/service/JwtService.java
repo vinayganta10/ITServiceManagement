@@ -1,6 +1,9 @@
 package com.example.ServiceManagement.service;
 
+import com.example.ServiceManagement.exceptions.JwtAuthenticationException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -76,11 +79,18 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(getKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try{
+            return Jwts.parser()
+                    .verifyWith(getKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        }
+        catch (ExpiredJwtException e) {
+            throw new JwtAuthenticationException("JWT token has expired");
+        } catch (JwtException e) {
+            throw new JwtAuthenticationException("Invalid JWT token");
+        }
     }
 
     private SecretKey getKey() {
@@ -91,7 +101,11 @@ public class JwtService {
 
     public boolean verifyToken(String token, UserDetails userDetails) {
         final String userName = extractUsername(token);
-        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        boolean valid = userName.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        if (!valid) {
+            throw new SecurityException("Invalid or expired JWT token");
+        }
+        return valid;
     }
 
     private boolean isTokenExpired(String token) {

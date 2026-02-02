@@ -43,6 +43,8 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> userSignup(@Valid @RequestBody SignupRequest signupRequest){
+        signupRequest.setEmail(signupRequest.getEmail().toLowerCase());
+        signupRequest.setName(signupRequest.getName().replaceAll("\\s",""));
         userService.addUser(signupRequest);
         return new ResponseEntity<>("User signup successful",HttpStatus.OK);
     }
