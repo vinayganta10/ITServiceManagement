@@ -19,7 +19,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Profile() {
-  const { email } = useContext(AuthContext); // assuming user.email exists
+  const { email } = useContext(AuthContext); 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const {token} = useContext(AuthContext);

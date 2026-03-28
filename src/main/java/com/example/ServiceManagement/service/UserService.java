@@ -1,11 +1,14 @@
 package com.example.ServiceManagement.service;
 
-
 import com.example.ServiceManagement.dto.CursorPage;
 import com.example.ServiceManagement.dto.SignupRequest;
 import com.example.ServiceManagement.exceptions.BusinessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import com.example.ServiceManagement.dto.LoginRequest;
 import com.example.ServiceManagement.model.User;
@@ -18,9 +21,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService {
@@ -32,6 +38,9 @@ public class UserService {
 
     @Autowired
     JwtService jwtService;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
@@ -68,6 +77,12 @@ public class UserService {
         if (!authentication.isAuthenticated()) {
             throw new BusinessException("Invalid email or password");
         }
+        HttpEntity<Map<String,Object>> entity =  emailRequestBuilder(user);
+
+        restTemplate.exchange("http://localhost:8082/v1/emails/send",
+                HttpMethod.POST,
+                entity,
+                String.class);
 
         return jwtService.generateToken(user.getEmail(), role);
     }
@@ -89,5 +104,22 @@ public class UserService {
         boolean hasMore = users.size() == limit;
         Long nextCursor = hasMore ? users.get(users.size() - 1).getId() : null;
         return new CursorPage<>(users, nextCursor, hasMore);
+    }
+
+    public HttpEntity<Map<String,Object>> emailRequestBuilder(User user){
+        Map<String, Object> request = new HashMap<>();
+        request.put("to",List.of(user.getEmail()));
+        request.put("cc",null);
+        request.put("subject","User Login alert");
+        request.put("template","user-login");
+        Map<String,Object> data = new HashMap<>();
+        data.put("username",user.getName());
+        data.put("time",LocalDateTime.now());
+        request.put("data",data);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return new HttpEntity<>(request, headers);
     }
 }

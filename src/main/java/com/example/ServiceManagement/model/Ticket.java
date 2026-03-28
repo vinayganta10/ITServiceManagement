@@ -37,11 +37,10 @@ public class Ticket implements Copy<Ticket> {
 
     @Override
     public Ticket copy() {
-        Ticket ticket = Ticket.builder().
+        return Ticket.builder().
                 subject(this.subject).
                 description(this.description).
                 domain(this.domain).
                 assignedTo(this.assignedTo).build();
-        return ticket;
     }
 }

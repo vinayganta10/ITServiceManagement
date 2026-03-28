@@ -9,14 +9,18 @@ import com.example.ServiceManagement.repository.TicketRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TicketService {
@@ -28,6 +32,9 @@ public class TicketService {
 
     @Autowired
     AgentService agentService;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     //all
     public Ticket getTicketById(long id){
@@ -61,6 +68,18 @@ public class TicketService {
                 .build();
         ticketRepo.save(ticket);
         agentService.getAgentByIdAndUpdateNoOfTickets(agent.getId());
+
+        HttpEntity<Map<String,Object>> entity = buildEmailRequest(ticket,user,agent);
+
+        ResponseEntity<String> response =
+                restTemplate.exchange(
+                        "http://localhost:8082/v1/emails/send",
+                        HttpMethod.POST,
+                        entity,
+                        String.class
+                );
+        //System.out.println(response.getBody());
+
         return ticket.getId();
     }
 
@@ -122,5 +141,23 @@ public class TicketService {
        String eTag = "\"tickets-" + instant.toEpochMilli() + "-" + count + "\"";
         System.out.println(eTag);
        return eTag;
+    }
+
+    //email request builder
+    public HttpEntity<Map<String,Object>> buildEmailRequest(Ticket ticket,User user,Agent agent){
+        Map<String, Object> request = new HashMap<>();
+        request.put("to",List.of(user.getEmail()));
+        request.put("cc",List.of(agent.getEmail()));
+        request.put("subject","New ticket raised with id: " + ticket.getId());
+        request.put("template","ticket-created");
+        Map<String,Object> data = new HashMap<>();
+        data.put("ticketId",String.valueOf(ticket.getId()));
+        data.put("createdBy",user.getName());
+        request.put("data",data);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return new HttpEntity<>(request, headers);
     }
 }
